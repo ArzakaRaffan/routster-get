@@ -80,37 +80,105 @@
     revealables.forEach(el => io.observe(el));
   }
 
-  // ---- hero terminal: lines appear in order, the prompt is typed ----
-  const body = document.querySelector("[data-play]");
-  if (!body) return;
-  const lines = $$(".ln", body);
-  const sleep = ms => new Promise(r => setTimeout(r, ms));
-  let run = 0;
+  // ---- terminals: lines appear in order, "$ commands" are typed ----
+  // Loops check `visible`, so nothing keeps running while a terminal is off screen.
+  if (calm) return; // reduced motion: every terminal already shows its finished state
 
-  const play = async () => {
-    const id = ++run;
-    lines.forEach(l => { l.classList.add("pre"); l.classList.remove("in"); });
-    for (const l of lines) {
-      if (id !== run) return;
-      await sleep(+(l.dataset.w || 90));
-      if (id !== run) return;
-      l.classList.remove("pre"); l.classList.add("in");
-      if (l.hasAttribute("data-type")) {
-        const t = l.querySelector("[data-text]"), full = t.dataset.text;
-        t.textContent = "";
-        for (let i = 1; i <= full.length; i++) {
-          if (id !== run) return;
-          t.textContent = full.slice(0, i);
-          await sleep(18 + Math.random() * 34);
-        }
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const SPIN = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏";
+  const fmtTok = n => (n / 1000).toFixed(1) + "k";
+
+  const player = body => {
+    const lines = $$(".ln", body), hero = body.closest(".term-hero");
+    const tok = hero && hero.querySelector("[data-tok]");
+    const TOK = 18200;
+    let run = 0, visible = false, done = false;
+
+    const type = async (el, id) => {
+      const full = el.dataset.text;
+      el.textContent = "";
+      for (let i = 1; i <= full.length; i++) {
+        if (id !== run) return;
+        el.textContent = full.slice(0, i);
+        await sleep(hero ? 20 + Math.random() * 34 : 12 + Math.random() * 20);
       }
+    };
+    const spin = async (l, ms, id) => {
+      const g = l.firstElementChild, orig = g.textContent;
+      l.classList.add("busy");
+      for (let t = 0, f = 0; t < ms && id === run; t += 70, f++) {
+        g.textContent = "  " + SPIN[f % SPIN.length];
+        await sleep(70);
+      }
+      g.textContent = orig;
+      l.classList.remove("busy");
+    };
+
+    const play = async () => {
+      const id = ++run;
+      done = false;
+      lines.forEach(l => l.classList.add("pre"));
+      if (tok) tok.textContent = fmtTok(0);
+      for (const [i, l] of lines.entries()) {
+        const w = +(l.dataset.w || (hero ? 90 : 140)), spins = l.hasAttribute("data-spin");
+        await sleep(spins ? 120 : w);
+        if (id !== run) return;
+        l.classList.remove("pre");
+        const txt = l.querySelector("[data-text]");
+        if (txt) { l.classList.add("busy"); await type(txt, id); l.classList.remove("busy"); }
+        if (spins) await spin(l, w, id);
+        if (id !== run) return;
+        if (tok) tok.textContent = fmtTok(Math.round(TOK * (i + 1) / lines.length));
+      }
+      done = true;
+      if (hero) { await sleep(8000); if (id === run && visible) play(); } // the hero loops while on screen
+    };
+
+    if (body.hasAttribute("data-picker")) { // model picker: walk the cursor down the list
+      const opts = $$(".opt", body);
+      let k = 0;
+      setInterval(() => {
+        if (!visible || !done) return;
+        opts[k].classList.remove("sel"); opts[k].querySelector(".mk").textContent = " ";
+        k = (k + 1) % opts.length;
+        opts[k].classList.add("sel"); opts[k].querySelector(".mk").textContent = "❯";
+      }, 1600);
     }
+
+    lines.forEach(l => l.classList.add("pre"));
+    let started = false;
+    new IntersectionObserver(es => {
+      visible = es[0].isIntersecting;
+      if (visible && (!started || (hero && done))) { started = true; play(); }
+    }, { threshold: .35 }).observe(body);
+    return play;
   };
 
-  if (calm) return; // reduced motion: the finished session is already on screen
-  const seen = new IntersectionObserver(es => {
-    if (es[0].isIntersecting) { seen.disconnect(); play(); }
-  }, { threshold: .3 });
-  seen.observe(body);
-  document.querySelector("[data-replay]").addEventListener("click", play);
+  const players = $$("[data-play]").map(player);
+  const replay = document.querySelector("[data-replay]");
+  if (replay) replay.addEventListener("click", players[0]);
+
+  // ---- hero terminal tilt: pointer devices only, at most one style write per frame ----
+  const wrap = document.querySelector(".term-wrap");
+  if (wrap && matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    let raf = 0, ev = null;
+    wrap.addEventListener("pointermove", e => {
+      ev = e;
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const r = wrap.getBoundingClientRect(), x = (ev.clientX - r.left) / r.width, y = (ev.clientY - r.top) / r.height;
+        wrap.classList.add("tilting");
+        wrap.style.setProperty("--ry", ((x - .5) * 6).toFixed(2) + "deg");
+        wrap.style.setProperty("--rx", ((.5 - y) * 5).toFixed(2) + "deg");
+        wrap.style.setProperty("--gx", (x * 100).toFixed(1) + "%");
+        wrap.style.setProperty("--gy", (y * 100).toFixed(1) + "%");
+      });
+    });
+    wrap.addEventListener("pointerleave", () => {
+      wrap.classList.remove("tilting");
+      wrap.style.setProperty("--rx", "0deg");
+      wrap.style.setProperty("--ry", "0deg");
+    });
+  }
 })();
