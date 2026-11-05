@@ -42,7 +42,7 @@ jobs:
       - name: Local links resolve
         run: |
           cd site
-          for f in $(grep -oE '(href|src)="[^"#:]+"' index.html | sed -E 's/^(href|src)="//; s/"$//' | sort -u); do
+          for f in $(grep -oE '(href|src)="[^"#:?]+"' index.html | sed -E 's/^(href|src)="//; s/"$//' | sort -u); do
             test -e "$f" || { echo "missing: $f"; exit 1; }
           done
 
