@@ -1,0 +1,66 @@
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  # Daily: catches an upstream installer that moved or broke the wrappers' contract.
+  schedule:
+    - cron: "17 3 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Lint install.sh
+        run: |
+          bash -n site/install.sh
+          shellcheck site/install.sh
+
+      # --manifest only prints the installer's stage list, so this runs the real wrapper end to end
+      # (download from main, hand over args) without installing anything.
+      - name: install.sh reaches the real installer
+        run: bash site/install.sh --manifest | python3 -c 'import json,sys; s=json.load(sys.stdin)["stages"]; assert s, "no stages"; print(len(s), "stages")'
+
+      - name: install.ps1 reaches the real installer
+        shell: pwsh
+        run: |
+          $m = ./site/install.ps1 -Manifest | ConvertFrom-Json
+          if (-not $m.stages) { throw "no stages" }
+          "$($m.stages.Count) stages"
+
+      - name: Local links resolve
+        run: |
+          cd site
+          for f in $(grep -oE '(href|src)="[^"#:]+"' index.html | sed -E 's/^(href|src)="//; s/"$//' | sort -u); do
+            test -e "$f" || { echo "missing: $f"; exit 1; }
+          done
+
+  deploy:
+    needs: check
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
