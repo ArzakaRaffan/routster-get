@@ -34,35 +34,79 @@
   // ---- install boxes: OS tabs + copy ----
   const OS = {
     unix: { cmd: "curl -fsSL https://get.routster.trackster.dev/install.sh | bash", prompt: "$", shell: "bash",
-            hint: "Data di ~/.routster. Instalan Hermes (~/.hermes) tidak disentuh." },
+            hint: { id: "Data di ~/.routster. Instalan Hermes (~/.hermes) tidak disentuh.",
+                    en: "Data lives in ~/.routster. A Hermes install (~/.hermes) is left alone." } },
     win:  { cmd: "irm https://get.routster.trackster.dev/install.ps1 | iex", prompt: "PS>", shell: "PowerShell",
-            hint: "Buka PowerShell (bukan cmd). Data di %LOCALAPPDATA%\\routster." },
+            hint: { id: "Buka PowerShell (bukan cmd). Data di %LOCALAPPDATA%\\routster.",
+                    en: "Use PowerShell (not cmd). Data lives in %LOCALAPPDATA%\\routster." } },
   };
+  let lang = "id", os = /Win/.test(navigator.platform || navigator.userAgent) ? "win" : "unix";
   const boxes = $$(".install");
   const moveInd = box => {
     const on = box.querySelector('.tab[aria-selected="true"]'), ind = box.querySelector(".tab-ind");
     if (on && ind) { ind.style.width = on.offsetWidth + "px"; ind.style.transform = `translateX(${on.offsetLeft}px)`; }
   };
-  const setOS = os => boxes.forEach(box => {
+  const setOS = next => { os = next; boxes.forEach(box => {
     const o = OS[os];
     $$(".tab", box).forEach(t => t.setAttribute("aria-selected", String(t.dataset.os === os)));
     box.querySelector("[data-cmd]").textContent = o.cmd;
     box.querySelector("[data-prompt]").textContent = o.prompt;
     box.querySelector("[data-shell]").textContent = o.shell;
-    box.querySelector("[data-hint]").textContent = o.hint;
+    box.querySelector("[data-hint]").textContent = o.hint[lang];
     moveInd(box);
-  });
+  }); };
   boxes.forEach(box => $$(".tab", box).forEach(t => t.addEventListener("click", () => setOS(t.dataset.os))));
-  setOS(/Win/.test(navigator.platform || navigator.userAgent) ? "win" : "unix");
   addEventListener("resize", () => boxes.forEach(moveInd));
   document.fonts && document.fonts.ready.then(() => boxes.forEach(moveInd));
 
   $$("[data-copy]").forEach(btn => btn.addEventListener("click", async () => {
     const text = btn.closest(".install").querySelector("[data-cmd]").textContent;
     try { await navigator.clipboard.writeText(text); } catch (e) { return; }
-    btn.classList.add("copied"); btn.setAttribute("aria-label", "Tersalin");
-    setTimeout(() => { btn.classList.remove("copied"); btn.setAttribute("aria-label", "Salin perintah instal"); }, 1600);
+    btn.classList.add("copied");
+    setTimeout(() => btn.classList.remove("copied"), 1600);
   }));
+
+  // ---- language: Indonesian lives in the markup, English in data-en (HTML allowed) ----
+  const LANG_KEY = "routster.locale"; // same key as routster.trackster.dev
+  const META = {
+    id: { title: "Routster Agent: coding agent di terminal" },
+    en: { title: "Routster Agent: a coding agent in your terminal" },
+  };
+  const setLang = next => {
+    lang = next;
+    root.lang = lang;
+    document.title = META[lang].title;
+    $$("[data-en]").forEach(el => {
+      if (el.dataset.id === undefined) el.dataset.id = el.innerHTML;
+      el.innerHTML = lang === "en" ? el.dataset.en : el.dataset.id;
+    });
+    $$("[data-text-en]").forEach(el => {
+      if (el.dataset.textId === undefined) el.dataset.textId = el.dataset.text;
+      el.dataset.text = lang === "en" ? el.dataset.textEn : el.dataset.textId;
+      el.textContent = el.dataset.text;
+    });
+    $$("[data-lang]").forEach(a => a.setAttribute("aria-current", String(a.dataset.lang === lang)));
+    setOS(os);
+  };
+  $$("[data-lang]").forEach(a => a.addEventListener("click", e => {
+    e.preventDefault();
+    try { localStorage.setItem(LANG_KEY, a.dataset.lang); } catch (err) {}
+    const u = new URL(location.href); u.searchParams.delete("lang"); history.replaceState(null, "", u);
+    setLang(a.dataset.lang);
+  }));
+  const pickLang = () => {
+    const q = new URLSearchParams(location.search).get("lang");
+    if (q === "id" || q === "en") { try { localStorage.setItem(LANG_KEY, q); } catch (e) {} return q; }
+    let saved = null;
+    try { saved = localStorage.getItem(LANG_KEY); } catch (e) {}
+    if (saved === "id" || saved === "en") return saved;
+    return /^id\b/i.test(navigator.language || "") ? "id" : "en";
+  };
+  setLang(pickLang());
+
+  // ---- orbit only spins while on screen ----
+  const orbit = document.querySelector(".orbit");
+  if (orbit) new IntersectionObserver(es => orbit.classList.toggle("live", es[0].isIntersecting)).observe(orbit);
 
   // ---- pointer spotlight on cards ----
   $$(".spot").forEach(el => el.addEventListener("pointermove", e => {

@@ -131,7 +131,6 @@ table.t td { color: var(--fg-2); }
 .cta-card .install { margin-top: 0; justify-self: end; width: 100%; }
 @media (max-width: 980px) { .cta-card { grid-template-columns: minmax(0, 1fr); } .cta-card .install { justify-self: stretch; } }
 .eyebrow.cmd { text-transform: none; letter-spacing: 0; }
-.step-head p { min-height: 3.2em; }
 
 /* ---------- motion (transform/opacity only, so it stays on the compositor) ---------- */
 .reveal { transition: opacity .9s var(--ease), transform .9s var(--ease); }
@@ -174,3 +173,57 @@ table.t td { color: var(--fg-2); }
 .term .opt { display: block; margin: 0 -18px; padding: 0 18px; transition: background .4s var(--ease), box-shadow .4s var(--ease), color .4s; }
 
 @media (prefers-reduced-motion: reduce) { .hero::after { animation: none; } .term-wrap { transform: none; } }
+
+/* ---------- hero logos ---------- */
+.logo-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 26px; }
+.logo-row .lt {
+  width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; flex: none;
+  border: 1px solid var(--line); background: var(--bg-raised); color: var(--fg-2); box-shadow: var(--shadow);
+  animation: tile-in .7s var(--ease-spring) both; animation-delay: calc(var(--i) * 55ms + 450ms);
+  transition: transform .35s var(--ease-spring), color .2s, border-color .2s;
+}
+.logo-row .lt svg { width: 20px; height: 20px; }
+.logo-row .lt:hover { transform: translateY(-3px); color: var(--fg); border-color: var(--line-strong); }
+.logo-row .more { display: inline-flex; align-items: center; gap: 6px; margin-left: 6px; font-size: 13px; color: var(--fg-2); animation: tile-in .7s var(--ease) both; animation-delay: calc(var(--i) * 55ms + 450ms); transition: color .2s; }
+.logo-row .more:hover { color: var(--fg); }
+.logo-row .more svg { width: 13px; height: 13px; transition: transform .25s var(--ease); }
+.logo-row .more:hover svg { transform: translateX(3px); }
+@keyframes tile-in { from { opacity: 0; transform: translateY(8px) scale(.9); } }
+
+/* ---------- bring your own key: orbit ---------- */
+.byok { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 64px); align-items: center; padding: clamp(24px, 4vw, 48px); overflow: hidden; }
+.byok-copy { display: grid; gap: 16px; align-content: start; }
+.byok-copy .term { margin-top: 8px; box-shadow: none; }
+.orbit { --r: 150px; position: relative; width: calc(var(--r) * 2 + 64px); max-width: 100%; aspect-ratio: 1; justify-self: center; }
+.orbit .ring { position: absolute; inset: 32px; border-radius: 50%; border: 1px dashed var(--line-strong); }
+.orbit .ring.r2 { inset: calc(32px + var(--r) * .45); border: 1px solid var(--line); background: radial-gradient(closest-side, var(--accent-soft), transparent); }
+.orbit .hub {
+  position: absolute; left: 50%; top: 50%; width: 72px; height: 72px; margin: -36px; border-radius: 20px; z-index: 1;
+  display: grid; place-items: center; background: var(--bg-raised); border: 1px solid var(--line-strong); box-shadow: var(--shadow-pop);
+}
+.orbit .hub .brand-mark { width: 34px; height: 34px; }
+.orbit .hub::after { content: ""; position: absolute; inset: -1px; border-radius: inherit; border: 1px solid var(--accent); animation: pulse 3s var(--ease) infinite; }
+@keyframes pulse { 0% { transform: scale(1); opacity: .7; } 80%, 100% { transform: scale(1.6); opacity: 0; } }
+.orbit .orb { position: absolute; inset: 0; animation: orbit 48s linear infinite; }
+.orbit .op { position: absolute; left: 50%; top: 50%; transform: rotate(var(--a)) translateX(var(--r)) rotate(calc(-1 * var(--a))); }
+.orbit .ot {
+  position: absolute; width: 52px; height: 52px; margin: -26px; border-radius: 15px; display: grid; place-items: center;
+  background: var(--bg-raised); border: 1px solid var(--line); box-shadow: var(--shadow); color: var(--fg);
+  animation: orbit 48s linear infinite reverse;
+}
+.orbit .ot svg { width: 24px; height: 24px; }
+.orbit .ot .mono-glyph { font-size: 15px; font-weight: 500; color: var(--fg); }
+.orbit:not(.live) .orb, .orbit:not(.live) .ot, .orbit:not(.live) .hub::after { animation-play-state: paused; }
+@keyframes orbit { to { transform: rotate(360deg); } }
+@media (max-width: 980px) { .byok { grid-template-columns: minmax(0, 1fr); } .byok .orbit { order: -1; } }
+@media (max-width: 560px) { .orbit { --r: 112px; } .orbit .ot { width: 44px; height: 44px; margin: -22px; border-radius: 13px; } .orbit .ot svg { width: 20px; height: 20px; } }
+
+/* ---------- small pieces ---------- */
+.cost { display: grid; gap: 16px; }
+.cost .eyebrow svg { width: 14px; height: 14px; }
+.cost-list { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; color: var(--fg-2); }
+.cost-list li::marker { color: var(--fg-3); }
+.faq-head { display: grid; gap: 16px; margin-bottom: 40px; }
+.cta-copy { display: grid; gap: 12px; }
+.footer-brand { display: grid; gap: 16px; align-content: start; }
+@media (prefers-reduced-motion: reduce) { .orbit .orb, .orbit .ot { animation: none; } }

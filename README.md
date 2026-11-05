@@ -32,6 +32,12 @@ cp ../routster/web/assets/routster.css site/assets/routster.css
 
 `get.css` hanya memakai token (`var(--…)`), jadi otomatis ikut light/dark.
 
+## Bahasa (ID / EN)
+
+Teks Indonesia ada di markup, teks Inggris di atribut `data-en` di elemen yang sama (boleh berisi
+HTML ter-escape). Teks yang diketik di terminal pakai `data-text` + `data-text-en`. Bahasa dipilih
+dari `?lang=`, lalu `localStorage["routster.locale"]`, lalu bahasa browser.
+
 ## Preview lokal
 
 ```bash
