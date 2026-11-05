@@ -1,7 +1,7 @@
 # routster-get
 
 Landing page + one-liner installer untuk [Routster Agent](https://github.com/ArzakaRaffan/routster-agent),
-di-serve di **https://get.routster.trackster.dev** lewat GitHub Pages.
+untuk **https://get.routster.trackster.dev**. Situsnya static: cukup serve folder `site/`.
 
 ```bash
 curl -fsSL https://get.routster.trackster.dev/install.sh | bash          # macOS / Linux / WSL
@@ -16,7 +16,7 @@ irm https://get.routster.trackster.dev/install.ps1 | iex                  # Wind
 | `site/assets/routster.css` | Salinan design system dari `routster/web/assets/routster.css` |
 | `site/assets/get.css`, `get.js` | Style dan interaksi khusus halaman ini |
 | `site/install.sh`, `install.ps1` | Wrapper kecil yang selalu menjalankan installer terbaru dari `main` repo `routster-agent` |
-| `.github/workflows/pages.yml` | Cek wrapper end to end, lalu deploy ke Pages (push ke `main`, harian, manual) |
+| `.github/workflows/check.yml` | Cek wrapper end to end + link lokal (push, PR, harian, manual). Tidak deploy. |
 
 Installer aslinya tetap satu sumber di `routster-agent/scripts/`. Wrapper di sini nggak perlu diubah
 kalau installer berubah.
@@ -44,12 +44,21 @@ dari `?lang=`, lalu `localStorage["routster.locale"]`, lalu bahasa browser.
 python -m http.server 4173 -d site
 ```
 
-## Setup sekali (sudah/perlu dilakukan)
+## Deploy ke VPS
 
-1. Repo → Settings → Pages → Source: **GitHub Actions**.
-2. DNS: record `CNAME` `get.routster` → `arzakaraffan.github.io` (di zona `trackster.dev`).
-   Kalau pakai Cloudflare, set **DNS only** (awan abu-abu) sampai sertifikat Pages terbit.
-3. Settings → Pages → Custom domain `get.routster.trackster.dev`, lalu centang **Enforce HTTPS**.
+Serve `site/` apa adanya, tanpa build. Contoh nginx:
+
+```nginx
+server {
+  server_name get.routster.trackster.dev;
+  root /var/www/routster-get/site;
+  location / { try_files $uri $uri/ =404; }
+  location ~ \.(sh|ps1)$ { default_type text/plain; add_header Cache-Control "no-cache"; }
+}
+```
+
+DNS: record `A` `get.routster` → IP VPS (di zona `trackster.dev`), lalu pasang HTTPS
+(misalnya `certbot --nginx -d get.routster.trackster.dev`). Perintah instal butuh HTTPS.
 
 Angka multiplier di demo `routster model` diambil dari `/v1/models` pada 6 November 2026. Itu cuma
 ilustrasi. Angka live selalu ada di `routster model`.
