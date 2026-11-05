@@ -7,7 +7,8 @@ set -euo pipefail
 main() {
   local url="https://raw.githubusercontent.com/ArzakaRaffan/routster-agent/main/scripts/install.sh"
   local script
-  if ! script="$(curl -fsSL "$url")"; then
+  # --retry covers transient failures, including raw.githubusercontent.com's 429 rate limit.
+  if ! script="$(curl -fsSL --retry 4 --retry-delay 3 "$url")"; then
     echo "Gagal mengunduh installer dari $url" >&2
     exit 1
   fi
