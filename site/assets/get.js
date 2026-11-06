@@ -34,8 +34,8 @@
   // ---- install boxes: OS tabs + copy ----
   const OS = {
     unix: { cmd: "curl -fsSL https://get.routster.trackster.dev/install.sh | bash", prompt: "$", shell: "bash",
-            hint: { id: "Data di ~/.routster. Instalan Hermes (~/.hermes) tidak disentuh.",
-                    en: "Data lives in ~/.routster. A Hermes install (~/.hermes) is left alone." } },
+            hint: { id: "Semua data di ~/.routster, punya sendiri.",
+                    en: "All data lives in ~/.routster, all its own." } },
     win:  { cmd: "irm https://get.routster.trackster.dev/install.ps1 | iex", prompt: "PS>", shell: "PowerShell",
             hint: { id: "Buka PowerShell (bukan cmd). Data di %LOCALAPPDATA%\\routster.",
                     en: "Use PowerShell (not cmd). Data lives in %LOCALAPPDATA%\\routster." } },

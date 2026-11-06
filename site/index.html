@@ -40,7 +40,6 @@
     <div class="header-actions">
       <div class="theme-toggle tt-top hide-xs" role="group" aria-label="Theme"><span class="tt-thumb" aria-hidden="true"></span><button type="button" data-theme-set="system" aria-label="System"><svg><use href="#i-monitor"/></svg></button><button type="button" data-theme-set="light" aria-label="Light"><svg><use href="#i-sun"/></svg></button><button type="button" data-theme-set="dark" aria-label="Dark"><svg><use href="#i-moon"/></svg></button></div>
       <div class="lang-switch" aria-label="Language"><a href="?lang=id" hreflang="id" data-lang="id">ID</a><a href="?lang=en" hreflang="en" data-lang="en">EN</a></div>
-      <a class="btn btn-ghost btn-sm hide-sm" href="https://github.com/ArzakaRaffan/routster-agent" aria-label="GitHub"><svg><use href="#i-github"/></svg>GitHub</a>
       <a class="btn btn-primary btn-sm hide-xs" href="https://routster.trackster.dev/register" data-en="Get API key">Ambil API key</a>
     </div>
   </div>
@@ -51,7 +50,7 @@
 <section class="hero">
   <div class="wrap hero-grid">
     <div class="hero-in">
-      <span class="badge badge-accent" style="--d:0"><span class="live-dot" aria-hidden="true"></span>Open source · fork Hermes Agent</span>
+      <span class="badge badge-accent" style="--d:0"><span class="live-dot" aria-hidden="true"></span><span data-en="Open source · runs in your terminal">Open source · jalan di terminal</span></span>
       <h1 class="h1 mask" style="--d:1"><span class="ml"><span>Coding agent</span></span><span class="ml"><span data-en="in your terminal">di terminal</span></span><span class="ml l2"><span data-en="paid in Rupiah">bayar Rupiah</span></span></h1>
       <p class="lede" style="--d:2" data-en="Edits files, runs tests, and fixes bugs right in your project.">Edit file, jalankan test, dan perbaiki bug langsung di project kamu.</p>
 
@@ -156,7 +155,7 @@
     </div>
 
     <div class="facts-row reveal">
-      <div class="fact"><svg><use href="#i-box"/></svg><b data-en="Own folder">Folder sendiri</b><p><code>~/.routster</code><span data-en=", separate from Hermes">, terpisah dari Hermes</span></p></div>
+      <div class="fact"><svg><use href="#i-box"/></svg><b data-en="Own folder">Folder sendiri</b><p><code>~/.routster</code><span data-en=", all its own">, punya sendiri</span></p></div>
       <div class="fact"><svg><use href="#i-key"/></svg><b data-en="Key stays local">Key aman</b><p data-en="&lt;code&gt;.env&lt;/code&gt; with permission 600">Di <code>.env</code>, permission 600</p></div>
       <div class="fact"><svg><use href="#i-server"/></svg><b>Sandbox</b><p>Docker, SSH, Modal, Daytona, Vercel</p></div>
       <div class="fact"><svg><use href="#i-eye-off"/></svg><b data-en="Private">Privasi</b><p data-en="Prompts are never stored">Prompt tidak disimpan</p></div>
@@ -235,17 +234,12 @@
   <div class="wrap wrap-narrow">
     <div class="reveal faq-head"><span class="eyebrow"><span class="tick"></span>FAQ</span><h2 class="h2" data-en="Questions">Pertanyaan umum</h2></div>
     <div class="faq reveal">
-      <details><summary><span data-en="How is it different from Hermes Agent?">Bedanya dengan Hermes Agent?</span><svg><use href="#i-plus"/></svg></summary><div class="a"><p data-en="It's a fork of &lt;a class=&quot;link&quot; href=&quot;https://github.com/NousResearch/hermes-agent&quot;&gt;Hermes Agent&lt;/a&gt; (MIT). Routster is the default provider and data lives in &lt;code&gt;~/.routster&lt;/code&gt;, so both can be installed side by side.">Fork dari <a class="link" href="https://github.com/NousResearch/hermes-agent">Hermes Agent</a> (MIT). Routster jadi provider default dan datanya di <code>~/.routster</code>, jadi bisa dipasang bareng Hermes.</p></div></details>
+      <details><summary><span data-en="Is it open source?">Apakah ini open source?</span><svg><use href="#i-plus"/></svg></summary><div class="a"><p data-en="Yes, MIT-licensed. Routster is the default provider and all data lives in &lt;code&gt;~/.routster&lt;/code&gt;, so it sits alongside any other tools you run.">Ya, lisensi MIT. Routster jadi provider default dan semua datanya di <code>~/.routster</code>, jadi aman jalan berdampingan dengan tool lain.</p></div></details>
       <details><summary><span data-en="Do I need a Routster account?">Harus punya akun Routster?</span><svg><use href="#i-plus"/></svg></summary><div class="a"><p data-en="Only for Routster models: sign up and top up with QRIS at &lt;a class=&quot;link&quot; href=&quot;https://routster.trackster.dev/register&quot;&gt;routster.trackster.dev&lt;/a&gt;. Other providers just need their own key.">Untuk model Routster, ya: daftar dan top up QRIS di <a class="link" href="https://routster.trackster.dev/register">routster.trackster.dev</a>. Provider lain cukup pakai key-nya sendiri.</p></div></details>
       <details><summary><span data-en="Can I use 9router or a local model?">Bisa pakai 9router atau model lokal?</span><svg><use href="#i-plus"/></svg></summary><div class="a"><p data-en="Yes. Run &lt;code&gt;routster model&lt;/code&gt;, pick &lt;b&gt;Custom endpoint&lt;/b&gt;, and enter any OpenAI-compatible URL (for 9router: &lt;code&gt;http://localhost:20128/v1&lt;/code&gt;).">Bisa. Jalankan <code>routster model</code>, pilih <b>Custom endpoint</b>, lalu masukkan URL OpenAI-compatible apa pun (untuk 9router: <code>http://localhost:20128/v1</code>).</p></div></details>
       <details><summary><span data-en="Is it safe on my repo?">Aman dipakai di repo saya?</span><svg><use href="#i-plus"/></svg></summary><div class="a"><p data-en="Risky commands wait for your approval (&lt;code&gt;--yolo&lt;/code&gt; turns that off). For isolation, pick a sandbox with &lt;code&gt;routster setup terminal&lt;/code&gt;.">Perintah berisiko menunggu izin kamu (<code>--yolo</code> mematikannya). Untuk isolasi, pilih sandbox lewat <code>routster setup terminal</code>.</p></div></details>
       <details><summary><span data-en="Does it work on Windows?">Bisa di Windows?</span><svg><use href="#i-plus"/></svg></summary><div class="a"><p data-en="Yes, in PowerShell. In WSL, use the &lt;code&gt;curl&lt;/code&gt; command.">Bisa, lewat PowerShell. Di WSL, pakai perintah <code>curl</code>.</p><div class="code"><pre class="src"><code>irm https://get.routster.trackster.dev/install.ps1 | iex</code></pre></div></div></details>
       <details><summary><span data-en="How do I update?">Cara update?</span><svg><use href="#i-plus"/></svg></summary><div class="a"><p data-en="Run &lt;code&gt;routster update&lt;/code&gt;.">Jalankan <code>routster update</code>.</p></div></details>
-      <details><summary><span data-en="Install from source?">Instal manual dari source?</span><svg><use href="#i-plus"/></svg></summary><div class="a"><div class="code"><pre class="src"><code>git clone https://github.com/ArzakaRaffan/routster-agent.git
-cd routster-agent
-uv python install 3.14
-"$(uv python find 3.14)" -m pm.build_env --source . --out ~/.local/share/routster-agent/venv
-mkdir -p ~/.local/bin &amp;&amp; ln -sf ~/.local/share/routster-agent/venv/bin/routster ~/.local/bin/routster</code></pre></div><p data-en="Plain &lt;code&gt;pip install&lt;/code&gt; won't work: dependencies only resolve through &lt;code&gt;uv.lock&lt;/code&gt;.">Bukan <code>pip install</code>: dependensinya hanya bisa di-resolve lewat <code>uv.lock</code>.</p></div></details>
     </div>
   </div>
 </section>
@@ -278,12 +272,12 @@ mkdir -p ~/.local/bin &amp;&amp; ln -sf ~/.local/share/routster-agent/venv/bin/r
         <a class="brand" href="#" aria-label="Routster Agent"><svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><path class="ring" d="M18.4 5.6A9 9 0 1 0 21 12"/><circle class="core" cx="12" cy="12" r="3.6"/></svg><span>Routster <span class="ai">Agent</span></span></a>
         <p class="muted small" data-en="Coding agent in your terminal.">Coding agent di terminal.</p>
       </div>
-      <div><h4>Agent</h4><ul><li><a href="https://github.com/ArzakaRaffan/routster-agent">GitHub</a></li><li><a href="https://github.com/ArzakaRaffan/routster-agent/blob/main/FORK.md" data-en="Fork notes">Catatan fork</a></li><li><a href="install.sh">install.sh</a></li><li><a href="install.ps1">install.ps1</a></li></ul></div>
+      <div><h4>Agent</h4><ul><li><a href="install.sh">install.sh</a></li><li><a href="install.ps1">install.ps1</a></li><li><a href="https://routster.trackster.dev/docs" data-en="Docs">Dokumentasi</a></li></ul></div>
       <div><h4>Routster</h4><ul><li><a href="https://routster.trackster.dev">Routster AI</a></li><li><a href="https://routster.trackster.dev/models" data-en="Models">Model</a></li><li><a href="https://routster.trackster.dev/dashboard">Dashboard</a></li><li><a href="https://routster.trackster.dev/status">Status</a></li></ul></div>
-      <div><h4 data-en="Credits">Kredit</h4><ul><li><a href="https://github.com/NousResearch/hermes-agent">Hermes Agent</a></li><li><a href="https://github.com/ArzakaRaffan/routster-agent/blob/main/LICENSE" data-en="MIT license">Lisensi MIT</a></li></ul></div>
+      <div><h4 data-en="Legal">Legal</h4><ul><li><span data-en="MIT license">Lisensi MIT</span></li><li><a href="https://routster.trackster.dev/privacy" data-en="Privacy">Privasi</a></li><li><a href="https://routster.trackster.dev/terms" data-en="Terms">Ketentuan</a></li></ul></div>
     </div>
     <div class="footer-bottom">
-      <span data-en="© 2026 Routster AI · A fork of Hermes Agent by Nous Research.">© 2026 Routster AI · Fork dari Hermes Agent buatan Nous Research.</span>
+      <span data-en="© 2026 Routster AI · one key for every model worth using.">© 2026 Routster AI · satu API key untuk tiap model yang layak dipakai.</span>
       <div class="theme-toggle" role="group" aria-label="Theme"><button type="button" data-theme-set="system" aria-label="System"><svg><use href="#i-monitor"/></svg></button><button type="button" data-theme-set="light" aria-label="Light"><svg><use href="#i-sun"/></svg></button><button type="button" data-theme-set="dark" aria-label="Dark"><svg><use href="#i-moon"/></svg></button></div>
     </div>
     <div class="footer-wordmark" aria-hidden="true">routster</div>
